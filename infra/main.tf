@@ -1,18 +1,18 @@
 resource "google_compute_network" "vpc" {
-  name                    = sadaf-vpc
+  name                    = var.network_name
   auto_create_subnetworks = false
   routing_mode            = "REGIONAL"
 }
 
 resource "google_compute_subnetwork" "public" {
-  name          = "public-subnet01"
+  name          = "public-subnet"
   region        = var.region
   network       = google_compute_network.vpc.id
   ip_cidr_range = var.public_subnet_cidr
 }
 
 resource "google_compute_subnetwork" "private" {
-  name          = "private-subnet01"
+  name          = "private-subnet"
   region        = var.region
   network       = google_compute_network.vpc.id
   ip_cidr_range = var.private_subnet_cidr
@@ -33,6 +33,10 @@ resource "google_compute_firewall" "allow_ssh_to_public_from_my_ip" {
     protocol = "tcp"
     ports    = ["22"]
   }
+
+  log_config {
+    metadata = "INCLUDE_ALL_METADATA"
+  }
 }
 
 resource "google_compute_firewall" "allow_ssh_from_public_to_private" {
@@ -47,13 +51,19 @@ resource "google_compute_firewall" "allow_ssh_from_public_to_private" {
     protocol = "tcp"
     ports    = ["22"]
   }
+
+  log_config {
+    metadata = "INCLUDE_ALL_METADATA"
+  }
 }
 
 resource "google_compute_instance" "vm_public" {
-  name         = "vm-public"
-  machine_type = "e2-micro"
-  zone         = var.zone
-  tags         = ["public-ssh"]
+  name                = "vm-public"
+  machine_type        = "e2-micro"
+  zone                = var.zone
+  tags                = ["public-ssh"]
+  labels              = var.labels
+  deletion_protection = false
 
   boot_disk {
     initialize_params {
@@ -71,10 +81,12 @@ resource "google_compute_instance" "vm_public" {
 }
 
 resource "google_compute_instance" "vm_private" {
-  name         = "vm-private01"
-  machine_type = "e2-micro"
-  zone         = var.zone
-  tags         = ["private-ssh"]
+  name                = "vm-private"
+  machine_type        = "e2-micro"
+  zone                = var.zone
+  tags                = ["private-ssh"]
+  labels              = var.labels
+  deletion_protection = false
 
   boot_disk {
     initialize_params {

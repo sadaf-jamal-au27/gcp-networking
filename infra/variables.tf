@@ -38,3 +38,12 @@ variable "private_subnet_cidr" {
   default     = "10.10.2.0/24"
 }
 
+variable "labels" {
+  type        = map(string)
+  description = "Labels applied to non-prod resources that support labels."
+  default = {
+    env = "nonprod"
+    lab = "project-1"
+  }
+}
+
