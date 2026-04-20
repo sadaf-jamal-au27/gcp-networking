@@ -1,18 +1,18 @@
 resource "google_compute_network" "vpc" {
-  name                    = var.network_name
+  name                    = sadaf-vpc
   auto_create_subnetworks = false
   routing_mode            = "REGIONAL"
 }
 
 resource "google_compute_subnetwork" "public" {
-  name          = "public-subnet"
+  name          = "public-subnet01"
   region        = var.region
   network       = google_compute_network.vpc.id
   ip_cidr_range = var.public_subnet_cidr
 }
 
 resource "google_compute_subnetwork" "private" {
-  name          = "private-subnet"
+  name          = "private-subnet01"
   region        = var.region
   network       = google_compute_network.vpc.id
   ip_cidr_range = var.private_subnet_cidr
@@ -71,7 +71,7 @@ resource "google_compute_instance" "vm_public" {
 }
 
 resource "google_compute_instance" "vm_private" {
-  name         = "vm-private"
+  name         = "vm-private01"
   machine_type = "e2-micro"
   zone         = var.zone
   tags         = ["private-ssh"]
