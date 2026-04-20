@@ -1,0 +1,51 @@
+substitutions:
+  _TF_VERSION: "1.6.6"
+  _TF_DIR: "project-1/infra"
+
+  # Set these in the Cloud Build trigger (recommended), or replace inline.
+  _TF_STATE_BUCKET: "REPLACE_ME_tf_state_bucket"
+  _PROJECT_ID: "REPLACE_ME_project_id"
+  _REGION: "us-central1"
+  _ZONE: "us-central1-a"
+  _MY_IP_CIDR: "REPLACE_ME_x.x.x.x/32"
+
+steps:
+  - name: "hashicorp/terraform:${_TF_VERSION}"
+    id: "terraform-init"
+    entrypoint: "sh"
+    args:
+      - "-c"
+      - |
+        set -eu
+        cd "${_TF_DIR}"
+        terraform init \
+          -backend-config="bucket=${_TF_STATE_BUCKET}" \
+          -backend-config="prefix=gcp-networking/project-1"
+
+  - name: "hashicorp/terraform:${_TF_VERSION}"
+    id: "terraform-plan"
+    entrypoint: "sh"
+    args:
+      - "-c"
+      - |
+        set -eu
+        cd "${_TF_DIR}"
+        terraform plan -out=tfplan \
+          -var="project_id=${_PROJECT_ID}" \
+          -var="region=${_REGION}" \
+          -var="zone=${_ZONE}" \
+          -var="my_ip_cidr=${_MY_IP_CIDR}"
+
+  - name: "hashicorp/terraform:${_TF_VERSION}"
+    id: "terraform-apply"
+    entrypoint: "sh"
+    args:
+      - "-c"
+      - |
+        set -eu
+        cd "${_TF_DIR}"
+        terraform apply -auto-approve tfplan
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+

@@ -1,0 +1,16 @@
+.DS_Store
+
+# Terraform local working directory
+**/.terraform/
+
+# Terraform state
+**/*.tfstate
+**/*.tfstate.*
+
+# Terraform plan files
+**/*.tfplan
+
+# Terraform crash logs
+crash.log
+crash.*.log
+
