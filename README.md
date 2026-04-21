@@ -8,6 +8,6 @@ This lab deploys:
   - `vm-public` (external IP enabled)
   - `vm-private` (no external IP)
 
-# Deployed by Cloud Build using Terraform.
+### Deployed by Cloud Build using Terraform.
 
 # data-project-487612@cloudbuild.gserviceaccount.com
