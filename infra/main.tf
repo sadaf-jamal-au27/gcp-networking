@@ -38,6 +38,23 @@ resource "google_compute_firewall" "allow_ssh_to_public_from_my_ip" {
     metadata = "INCLUDE_ALL_METADATA"
   }
 }
+resource "google_compute_firewall" "allow_ssh_to_public_from_iap" {
+  name    = "allow-ssh-to-public-from-iap"
+  network = google_compute_network.vpc.name
+
+  direction     = "INGRESS"
+  source_ranges = ["35.235.240.0/20"]
+  target_tags   = ["public-ssh"]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  log_config {
+    metadata = "INCLUDE_ALL_METADATA"
+  }
+}
 
 resource "google_compute_firewall" "allow_ssh_from_public_to_private" {
   name    = "allow-ssh-from-public-to-private"
